@@ -1,0 +1,18 @@
+repos:
+  - repo: https://github.com/astral-sh/uv-pre-commit
+
+    hooks:
+      - id: uv-lock
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+
+    hooks:
+      - id: ruff-format
+      - id: ruff-check
+        args: [ --fix ]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+
+    hooks:
+      - id: check-toml
+      - id: check-yaml
+        args: [ --unsafe ]
+

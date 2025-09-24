@@ -1,0 +1,49 @@
+
+
+
+
+
+
+
+
+
+
+
+    { name = "Niels Neerhoff" },
+    { name = "Simon Brugman" },
+
+
+    { name = "Niels Neerhoff" },
+    { name = "Simon Brugman" },
+
+requires-python = ">=3.10"
+
+    "ordeq>=0.2.1",
+
+
+
+
+
+    "pymssql==2.3.7",
+
+    "pyspark==3.3.1"  # 3.3.1 is the oldest version we support
+
+
+
+
+
+
+git_describe_command = "git describe --dirty --tags --long --match ordeq-spark/*"
+
+
+
+
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "tests"]
+
+
+[tool.coverage.run]
+omit = [
+    "src/ordeq_spark/_version.py"
+]

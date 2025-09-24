@@ -1,0 +1,27 @@
+# Editor Config helps developers define and maintain consistent coding styles
+# between different editors and IDEs. PyCharm uses it out-of-the-box, VSCode
+# relies on a plugin. See http://editorconfig.org for more information.
+
+# Top-most EditorConfig file
+root = true
+
+# Universal settings.
+# Read https://www.jwz.org/doc/tabs-vs-spaces.html before discussing indent_style or tab_width.
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+tab_width = 8
+trim_trailing_whitespace = true
+
+# The `ruff format` command is authoritative for Python files.
+[*.py]
+max_line_length = 79
+
+[*.{yaml,yml}]
+indent_size = 2
+
+[Makefile]
+indent_style = tab

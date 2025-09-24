@@ -1,0 +1,56 @@
+
+
+
+from ordeq import IO
+
+
+
+
+class Text(IO[str]):
+
+
+
+
+
+
+
+
+
+
+
+
+
+    assert example.references == {"ios": [t1, t2]}
+
+
+
+
+
+
+
+    ds = Iterate(*[Text(path=path) for path in paths])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

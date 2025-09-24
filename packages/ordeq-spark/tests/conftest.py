@@ -1,0 +1,94 @@
+from collections.abc import Generator
+
+
+from typing import Any
+
+
+from _pytest.tmpdir import TempPathFactory
+
+
+
+
+
+
+
+
+
+
+
+
+def spark_warehouse_dir(tmp_path_factory: TempPathFactory) -> Path:
+    return tmp_path_factory.mktemp("spark-warehouse")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            f"-Dderby.system.home={spark_warehouse_dir}/derby",
+
+
+
+
+
+
+
+
+
+
+        .master("local[2]")
+
+
+
+
+
+
+def mssql() -> Generator[SqlServerContainer, Any, None]:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

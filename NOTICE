@@ -1,0 +1,13 @@
+################################################################################################
+#
+# NOTICE: pass-through licensing of third-party components
+#
+# Some Ordeq packages depend on pre-existing third-party open-source software components. These
+# software components are governed by their own licenses which Ordeq does not modify or
+# supersede. Please consult the originating authors. These components altogether have a mixture
+# of the following licenses: Apache 2.0, PSF, GNU, MIT and BSD3.
+#
+# Although we have examined the licenses to verify acceptance of commercial and non-commercial
+# use, please see and consult the original licenses or authors.
+#
+################################################################################################
