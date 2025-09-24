@@ -10,7 +10,7 @@ class EnvironmentVariable(IO[str]):
         - as input, to parameterize the node logic
         - as output, to set an environment variable based on node logic
 
-
+    Gets and sets `os.environ` on load and save. See [1] for more
     information.
 
     [1] https://docs.python.org/3/library/os.html#os.environ
@@ -35,14 +35,14 @@ class EnvironmentVariable(IO[str]):
 
     ```
 
-
+    When you run `transform` through the CLI as follows:
 
     ```shell
     export KEY=MyValue
     python {your-entrypoint} run --node transform
     ```
 
-
+    `MyValue` will be used as `value` in `transform`.
 
     """
 
@@ -50,10 +50,10 @@ class EnvironmentVariable(IO[str]):
     _: KW_ONLY
     default: str | None = None
 
-
+    def load(self) -> str:
         if self.default:
             return os.environ.get(self.key, self.default)
         return os.environ[self.key]
 
-
+    def save(self, value: str) -> None:
         os.environ[self.key] = value

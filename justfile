@@ -1,87 +1,87 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+_default:
+    @just --list --unsorted
+
+# Local installation
+localsetup: install precommit_install
+
+# Linting and formatting with ruff
+ruff: lint format
+
+# Linting with ruff
+lint:
+    uv run --group lint ruff check packages/ scripts/ || exit 1
+
+# Formatting with ruff
+format:
+    uv run --group lint ruff format --check packages/ scripts/ || exit 1
+
+# Type checking with ty
+ty:
+    uv run --group types ty check packages/ scripts/ || exit 1
+
+# Type checking with mypy
+mypy:
+    for dir in `find packages -maxdepth 1 -type d -name "ordeq*"`; do \
+        uv run --group types mypy --check-untyped-defs --follow-untyped-imports $dir/src || exit 1; \
+    done
+
+# Static analysis (lint + type checking)
+sa: ruff ty mypy
+
+# Format code and apply lint fixes with ruff
+fix:
+    uv run --group lint ruff format packages/ scripts/ || exit 1
+    uv run --group lint ruff check --fix packages/ scripts/
+
+# Test all packages individually
+# or test specific ones by passsing the names as arguments
+# eg. `just test` (Run tests in all packages)
+# or `just test ordeq ordeq-cli-runner` (Run tests in the 'ordeq' and 'ordeq-cli-runner' packages)
+test *PACKAGES:
+    if [ -z "{{ PACKAGES }}" ]; then \
+        for dir in `find packages -type d -name "ordeq*" -maxdepth 1`; do \
+            uv run --group test pytest $dir -v || exit 1; \
+        done \
+    else \
+        for package in {{ PACKAGES }}; do \
+            uv run --group test pytest packages/$package -v || exit 1; \
+        done \
+    fi
+
+# Test a single package
+test_package PACKAGE:
+    uv run --group test pytest packages/{{ PACKAGE }} -v
+
+# Run tests for all packages with coverage
+test_all:
+    uv run --group test pytest packages/ --cov=packages/ --cov-report=html
+
+# Build the documentation
+docs:
+    uv run scripts/generate_api_docs.py
+    uv run --group docs mkdocs serve --strict
+
+# Run pre-commit hooks
+precommit:
+    uv run pre-commit run --all-files
+
+# Install pre-commit hooks
+precommit_install:
+    uv run pre-commit install
+
+# Install development dependencies
+install:
+    uv sync --all-packages --all-groups --all-extras
+
+# Upgrade (pre-commit only)
+upgrade:
+    # TODO: keep an eye out for: https://github.com/astral-sh/uv/issues/6794
+    pre-commit autoupdate
+
+# Lock dependencies
+lock:
+    uv lock
+
+# Bump version
+bump *ARGS:
+    uv run scripts/next_tag.py {{ ARGS }} || exit 1

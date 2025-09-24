@@ -19,10 +19,10 @@ maintainers = [
 requires-python = ">=3.10"
 dependencies = [
     "ordeq>=0.2.1",
-
+    "ibis-framework",
 ]
 
-
+[dependency-groups]
 test = [
     "ibis-framework[polars,duckdb]",
 ]
@@ -39,7 +39,7 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src", "tests"]
-
+addopts = "--doctest-modules --import-mode=importlib"
 
 [tool.coverage.run]
 omit = [

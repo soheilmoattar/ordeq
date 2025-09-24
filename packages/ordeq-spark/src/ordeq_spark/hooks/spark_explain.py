@@ -6,7 +6,7 @@ from ordeq.framework.io import Output
 from pyspark.sql import DataFrame
 
 
-
+class SparkExplainHook(OutputHook[DataFrame]):
     """Hook to print the Spark execution plan before saving a DataFrame."""
 
     def __init__(

@@ -1,16 +1,16 @@
-
-
+from collections.abc import Generator
+from dataclasses import dataclass
 
 from ordeq.framework.io import Input
+from ordeq.types import GlobPath, PathLike
 
 
-
-
+@dataclass(frozen=True, kw_only=True)
 class Glob(Input[Generator[PathLike, None, None]]):
     """IO class that loads all paths provided a pattern.
-
-
-
+    Although this class can be used as dataset in your nodes,
+    for most cases it would be more suitable to inherit from
+    this class and extend the `load` method, for example:
 
     ```python
     >>> class LoadPartitions(Glob):
@@ -20,10 +20,10 @@ class Glob(Input[Generator[PathLike, None, None]]):
     ...             yield my_load_func(path)
 
     ```
+    """
 
+    path: GlobPath
+    pattern: str
 
-
-
-
-
-
+    def load(self) -> Generator[PathLike, None, None]:
+        return self.path.glob(self.pattern)

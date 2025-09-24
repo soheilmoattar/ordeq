@@ -4,7 +4,7 @@ from ordeq_cli_runner import parse_args
 
 class TestParseArgs:
     @pytest.mark.parametrize(
-
+        ("args", "expected"),
         [
             (
                 ("run", "--nodes", "domain_A:name_A"),
@@ -31,7 +31,7 @@ class TestParseArgs:
                 {
                     "action": "run",
                     "nodes": None,
-
+                    "pipeline": "domain_Z:name_Z",
                     "save": "all",
                     "hooks": [],
                 },

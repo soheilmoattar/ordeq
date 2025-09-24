@@ -11,7 +11,7 @@ from ordeq import IO
 class IbisParquet(IO[Table]):
     """IO to load from and save to PARQUET data using Ibis.
 
-
+    Example usage:
 
     ```python
     >>> from pathlib import Path
@@ -28,7 +28,7 @@ class IbisParquet(IO[Table]):
 
     ```
 
-
+    See [1] on how to configure the `resource`.
 
     [1]: https://ibis-project.org/reference/connection
 
@@ -37,11 +37,11 @@ class IbisParquet(IO[Table]):
     path: Path
     resource: Path | str
 
-
+    def load(self) -> Table:
         return self._backend.read_parquet(self.path)
 
-
-
+    def save(self, t: Table) -> None:
+        self._backend.to_parquet(t, self.path)
 
     @cached_property
     def _backend(self) -> BaseBackend:

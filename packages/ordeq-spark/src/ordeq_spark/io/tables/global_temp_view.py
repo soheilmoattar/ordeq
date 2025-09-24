@@ -1,14 +1,14 @@
+from dataclasses import dataclass
+from typing import Literal
+
+from ordeq import IO
+from pyspark.sql import DataFrame
+
+from ordeq_spark.utils import get_spark_session
 
 
-
-
-
-
-
-
-
-
-
+@dataclass(frozen=True, kw_only=True)
+class SparkGlobalTempView(IO[DataFrame]):
     """IO for reading from and writing to Spark global temporary views.
 
     Examples:
@@ -37,17 +37,17 @@
 
     """
 
+    table: str
 
+    def load(self) -> DataFrame:
+        return get_spark_session().table(f"global_temp.{self.table}")
 
-
-
-
-
-
-
-
-
-
-
-
-
+    def save(
+        self,
+        df: DataFrame,
+        mode: Literal["create", "createOrReplace"] = "create",
+    ) -> None:
+        if mode == "create":
+            df.createGlobalTempView(self.table)
+        if mode == "createOrReplace":
+            df.createOrReplaceGlobalTempView(self.table)

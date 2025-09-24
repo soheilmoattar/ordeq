@@ -2,7 +2,7 @@ from typing import Any
 
 import pymssql
 import pytest
-
+from ordeq_spark import SparkJDBCQuery, SparkJDBCTable
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.types import IntegerType, StringType, StructField, StructType
 from testcontainers.mssql import SqlServerContainer
@@ -15,13 +15,13 @@ def execute_mssql_query(
     of the `mssql` fixture in `conftest`. Typically used to test
     saving/loading of Spark to MSSQL.
 
+    Args:
+        mssql: Docker container running the SQL server
+        query: the query to execute
+        return_result: whether to fetch & return all records from cursor
 
-
-
-
-
-
-
+    Returns:
+        tuple of rows
     """
 
     result = None
@@ -85,7 +85,7 @@ class TestSparkJDBCTable:
         assert actual == data
 
     @pytest.mark.parametrize(
-
+        ("mode", "expected"),
         [("overwrite", data), ("append", data + data), ("ignore", data)],
     )
     def test_it_saves_to_mssql_twice(
@@ -103,7 +103,7 @@ class TestSparkJDBCTable:
             table=table,
             url=mssql_jdbc_url,
             driver="com.microsoft.sqlserver.jdbc.SQLServerDriver",
-
+        ).with_save_options(mode=mode)
         table.save(df)
         table.save(df)
 

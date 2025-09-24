@@ -1,6 +1,6 @@
 from ordeq import node
 from ordeq.framework.runner import run
-
+from ordeq_common import Static, StringBuffer
 
 x1 = Static(1)
 x2 = StringBuffer()

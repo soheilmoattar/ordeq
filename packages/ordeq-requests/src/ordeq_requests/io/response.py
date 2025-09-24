@@ -1,5 +1,5 @@
 from abc import abstractmethod
-
+from dataclasses import dataclass, field
 from typing import Literal, TypeVar
 
 import requests
@@ -106,10 +106,10 @@ class Response(Input[T]):
 
     url: str
     method: Literal["GET"] = "GET"
-
+    session: Session = field(default_factory=Session)
 
     @abstractmethod
-
+    def load(self) -> T: ...
 
     def _request(self) -> requests.Response:
         """Make a request and return the response.
@@ -128,17 +128,17 @@ class Response(Input[T]):
 
 @dataclass(frozen=True)
 class ResponseContent(Response[bytes]):
-
+    def load(self) -> bytes:
         return self._request().content
 
 
 @dataclass(frozen=True)
 class ResponseText(Response[str]):
-
+    def load(self) -> str:
         return self._request().text
 
 
 @dataclass(frozen=True)
 class ResponseJSON(Response[dict]):
-
+    def load(self) -> dict:
         return self._request().json()

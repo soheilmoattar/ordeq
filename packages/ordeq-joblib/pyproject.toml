@@ -22,7 +22,7 @@ dependencies = [
     "joblib",
 ]
 
-
+[dependency-groups]
 test = [
     "ordeq-pandas",
 ]

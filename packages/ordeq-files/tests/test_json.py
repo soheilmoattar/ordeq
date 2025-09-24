@@ -2,11 +2,11 @@ import json
 from collections.abc import Callable
 from pathlib import Path
 
-
+import pytest
 from cloudpathlib import CloudPath
 from minio.helpers import ObjectWriteResult
 from ordeq_files import JSON
-
+from urllib3 import BaseHTTPResponse
 
 
 class TestJSONLocal:
@@ -26,7 +26,7 @@ class TestJSONLocal:
 
 
 class TestJSONMinio:
-
+    @pytest.mark.docker
     def test_it_loads(
         self,
         minio_put_object: Callable[[str, bytes], ObjectWriteResult],
@@ -37,7 +37,7 @@ class TestJSONMinio:
         minio_put_object(key, json.dumps(data).encode("utf-8"))
         assert JSON(path=minio_cloudpath(key)).load() == data
 
-
+    @pytest.mark.docker
     def test_it_saves(
         self,
         minio_cloudpath: Callable[[str], CloudPath],

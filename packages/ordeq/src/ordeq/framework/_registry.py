@@ -16,7 +16,7 @@ T = TypeVar("T")
 class Registry(Generic[T]):
     """Class representing a registry of objects."""
 
-
+    _data: dict[Hashable, T] = field(default_factory=dict, init=False)
 
     def get(self, key: Hashable) -> T:
         """Retrieve the value associated with the given key.

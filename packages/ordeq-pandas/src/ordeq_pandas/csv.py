@@ -2,13 +2,13 @@ from dataclasses import dataclass
 
 import pandas as pd
 from ordeq.framework.io import IO
-
+from ordeq.types import PathLike
 
 
 @dataclass(frozen=True, kw_only=True)
 class PandasCSV(IO[pd.DataFrame]):
     """IO to load from and save to CSV data using Pandas. Calls
-
+    `pd.read_csv` and `pd.write_csv` under the hood.
 
     Example:
 
@@ -22,7 +22,7 @@ class PandasCSV(IO[pd.DataFrame]):
 
     ```
 
-
+    Load behaviour is configured by `with_load_options`:
 
     ```python
     >>> import pandas as pd
@@ -37,7 +37,7 @@ class PandasCSV(IO[pd.DataFrame]):
 
     ```
 
-
+    Save behaviour is configured by `with_save_options`:
 
     ```python
     >>> import pandas as pd
@@ -56,8 +56,8 @@ class PandasCSV(IO[pd.DataFrame]):
 
     path: PathLike
 
+    def load(self, **load_options) -> pd.DataFrame:
+        return pd.read_csv(self.path, **load_options)
 
-
-
-
-
+    def save(self, pdf: pd.DataFrame, **save_options) -> None:
+        pdf.to_csv(self.path, **save_options)

@@ -2,15 +2,15 @@ from dataclasses import dataclass
 
 import pandas as pd
 from ordeq.framework.io import IO
-
+from ordeq.types import PathLike
 
 
 @dataclass(frozen=True, kw_only=True)
 class PandasExcel(IO[pd.DataFrame]):
     """IO to load from and save to Excel data using Pandas. Calls
+    `pd.read_excel` and `pd.to_excel` under the hood.
 
-
-
+    Example usage:
 
     ```python
     >>> from pathlib import Path
@@ -21,7 +21,7 @@ class PandasExcel(IO[pd.DataFrame]):
 
     ```
 
-
+    Load behaviour is configured by `with_load_options`:
 
     ```python
     >>> from pathlib import Path
@@ -38,8 +38,8 @@ class PandasExcel(IO[pd.DataFrame]):
 
     path: PathLike
 
+    def load(self, **load_options) -> pd.DataFrame:
+        return pd.read_excel(self.path, **load_options)
 
-
-
-
-
+    def save(self, pdf: pd.DataFrame, **save_options) -> None:
+        pdf.to_excel(self.path, **save_options)

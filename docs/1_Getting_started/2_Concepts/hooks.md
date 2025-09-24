@@ -1,7 +1,7 @@
+# Hooks
 
-
-
-
+Hooks can be used to run code at certain phases in the run.
+With hooks, you can execute custom functionality such as data quality checks, logging and timing, without affecting data transformations in the nodes.
 
 ## Why hooks are useful
 
@@ -61,15 +61,15 @@ If you want to do this for every input, it quickly becomes tedious and error-pro
 Instead, you can use a hook to run this logic automatically around every input loading:
 
 ```python
+import time
 
-
-
+from ordeq import InputHook, Node, Input
 
 class TimeHook(InputHook):
-
+    def before_input_load(self, io: Input) -> None:
         self.start_time = time.time()
 
-
+    def after_input_load(self, io: Input) -> None:
         end_time = time.time()
         print(f"Loading {io} took {end_time - self.start_time} seconds")
 ```
@@ -90,7 +90,7 @@ To ensure the hook is executed, it needs to be attached to the input:
 ### Types of hooks
 Ordeq provides three types of hooks:
 
-
+- `RunHook`: called around a set of nodes
 - `NodeHook`: called around running a node
 - `InputHook`: called around the loading of inputs
 - `OutputHook`: called around the saving of outputs
@@ -98,40 +98,40 @@ Ordeq provides three types of hooks:
 The following diagram depicts how the hooks are applied by Ordeq:
 
 ```mermaid
+graph LR
+    subgraph Run
+        Z[Start run] --> Z1[RunHook.before_run]
+        Z1 --> Z2{{For each node}}
+        Z2 --> A
+        subgraph Node
+            A[Start node run] --> B[NodeHook.before_node_run]
+            B --> C1{{For each input}}
+            subgraph Input
+                C1 --> C2[InputHook.before_input_load]
+                C2 --> C3[Load input]
+                C3 --> C4[InputHook.after_input_load]
+                C4 --> D1{{Next input}}
+                D1 -- More? --> C2
 
+            end
+            D1 -- All done --> E[Call node function]
+            E -->|Success| F1{{For each output}}
+            subgraph Output
+                F1 --> F2[OutputHook.before_output_save]
+                F2 --> F3[Save output]
+                F3 --> F4[OutputHook.after_output_save]
+                F4 --> G1{{Next output}}
+                G1 -- More? --> F2
+            end
+            G1 -- All done --> H[NodeHook.after_node_run]
+            H --> I[End node run]
+            E -->|Error| X[NodeHook.on_node_call_error]
+            X --> I
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        end
+        I --> Z3[RunHook.after_run]
+        Z3 --> End[End run]
+    end
 ```
 
 This page demonstrated the concept of hooks and discussed an elementary examples.

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, replace
-
+from typing import Generic, TypeVar, overload
 
 from ordeq import IO, Input, Output
 
@@ -8,7 +8,7 @@ try:
 except ImportError:
     from typing_extensions import Self
 
-
+T = TypeVar("T")
 Tkey = TypeVar("Tkey")
 Tval = TypeVar("Tval")
 
@@ -37,7 +37,7 @@ class MatchOnLoad(Input[Tval], Generic[Tkey, Tval]):
         return replace(self, default=val)
 
 
-
+@dataclass(frozen=True, kw_only=True)
 class MatchOnSave(Output[tuple[Tkey, Tval]], Generic[Tkey, Tval]):
     cases: tuple[tuple[Tkey, Output[Tval] | IO[Tval]], ...] = ()
     default: Output[Tval] | IO[Tval] | None = None
@@ -61,11 +61,11 @@ class MatchOnSave(Output[tuple[Tkey, Tval]], Generic[Tkey, Tval]):
         return replace(self, default=val)
 
 
-
+@overload
 def Match(io: Input[Tkey] | IO[Tkey]) -> MatchOnLoad[Tval, Tkey]: ...
 
 
-
+@overload
 def Match() -> MatchOnSave[Tval, Tkey]: ...
 
 

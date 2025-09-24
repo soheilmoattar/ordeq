@@ -11,14 +11,14 @@ class Fruit:
     colour: str
 
 
+def test_it_loads():
+    assert Dataclass(
+        Static({"name": "banana", "colour": "yellow"}), Fruit
+    ).load() == Fruit(name="banana", colour="yellow")
 
 
-
-
-
-
-
-
-
-
-
+def test_it_errors_for_invalid_data():
+    with pytest.raises(IOException, match="unexpected keyword"):
+        Dataclass(
+            Static({"name": "banana", "weight_gr": "100g"}), Fruit
+        ).load()

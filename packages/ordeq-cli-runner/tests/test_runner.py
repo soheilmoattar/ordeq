@@ -5,7 +5,7 @@ from ordeq import Node
 from ordeq.framework import Pipeline
 from ordeq.framework.hook import NodeHook
 from ordeq_cli_runner.runner import get_hook, get_node, get_obj, get_pipeline
-
+from ordeq_common import Static
 
 
 @pytest.fixture(scope="module")
@@ -30,13 +30,13 @@ def pipeline(node_1, node_2, node_3) -> Pipeline:
 
 @pytest.fixture(scope="module")
 def module(node_1, node_2, node_3, pipeline) -> Mock:
-
-
-
-
-
-
-
+    mock_module = Mock()
+    mock_module.node_1 = node_1
+    mock_module.node_2 = node_2
+    mock_module.node_3 = node_3
+    mock_module.pipeline = pipeline
+    mock_module.something_else = "something_else"
+    return mock_module
 
 
 A, B, C, D, E, F = [Static(c) for c in "ABCDEF"]

@@ -1,13 +1,13 @@
-
-
-
+from collections.abc import Iterable
+from dataclasses import dataclass
+from typing import TypeVar
 
 from ordeq import IO
 
+T = TypeVar("T")
 
 
-
-
+@dataclass(frozen=True)
 class _Iterate(IO[Iterable[T]]):
     ios: tuple[IO[T], ...]
 
@@ -23,7 +23,7 @@ class _Iterate(IO[Iterable[T]]):
 def Iterate(*ios: IO[T]) -> _Iterate[T]:
     """IO for loading and saving iteratively. This can be useful when
     processing multiple IOs using the same node, while only requiring
-
+    to have one of them in memory at the same time.
 
     Examples:
 

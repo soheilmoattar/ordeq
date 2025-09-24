@@ -1,16 +1,16 @@
+from dataclasses import dataclass
+from pathlib import Path
+
+from ordeq import Output
 
 
-
-
-
-
-
+@dataclass(kw_only=True, frozen=True)
 class ExampleOutputSaveKwarg(Output):
-
-
+    path: Path
+    attribute: str
 
     def save(self, data: str, hello: str = "Guten tag") -> None:
-
+        assert data == f"{self.path}@{self.attribute}: {hello} world!"
 
 
 example_output = ExampleOutputSaveKwarg(path=Path("hello.txt"), attribute="L1")
@@ -18,14 +18,14 @@ example_output = ExampleOutputSaveKwarg(path=Path("hello.txt"), attribute="L1")
 example_output.save("hello.txt@L1: Guten tag world!")
 # Alternative kwarg:
 example_output.save("hello.txt@L1: Bonjour world!", hello="Bonjour")
+print(type(example_output))
 
-
-
+with_options = example_output.with_save_options(hello="Hello")
 # No kwarg, with save options:
-
+with_options.save("hello.txt@L1: Hello world!")
 # Alternative kwarg, with save options:
 with_options.save("hello.txt@L1: Buenos dias world!", hello="Buenos dias")
-
+print(type(with_options))
 
 
 @dataclass(kw_only=True, frozen=True)

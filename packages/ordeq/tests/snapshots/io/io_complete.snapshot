@@ -6,12 +6,12 @@ hello.txt@L1: Hi world!
 <class 'io_complete.ExampleIO'>
 <class 'io_complete.ExampleIO'>
 
-
-
-
+Logging:
 INFO	ordeq.framework.io	Loading ExampleIO(path=PosixPath('hello.txt'), attribute='L1')
 INFO	ordeq.framework.io	Loading ExampleIO(path=PosixPath('hello.txt'), attribute='L1')
-
+INFO	ordeq.framework.io	Loading ExampleIO(path=PosixPath('hello.txt'), attribute='L1')
+INFO	ordeq.framework.io	Loading ExampleIO(path=PosixPath('hello.txt'), attribute='L1')
+INFO	ordeq.framework.io	Saving ExampleIO(path=PosixPath('world.txt'), attribute='L2')
 INFO	ordeq.framework.io	Saving ExampleIO(path=PosixPath('world.txt'), attribute='L2')
 INFO	ordeq.framework.io	Saving ExampleIO(path=PosixPath('world.txt'), attribute='L2')
 INFO	ordeq.framework.io	Saving ExampleIO(path=PosixPath('world.txt'), attribute='L2')

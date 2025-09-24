@@ -1,14 +1,14 @@
 import os
-
-
+from collections.abc import Generator
+from typing import Any
 
 import pytest
-
-
+from ordeq import IOException
+from ordeq_args import EnvironmentVariable
 
 
 @pytest.fixture
-
+def env() -> Generator[None, Any, None]:
     try:
         os.environ["KEY"] = "MyKey"
         yield

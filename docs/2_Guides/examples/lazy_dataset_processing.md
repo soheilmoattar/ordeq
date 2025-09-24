@@ -1,13 +1,13 @@
+# Lazily dataset processing
 
+Loading multiple files in memory for processing at the same time can be problematic.
+When processing batches of files, such as partitioned parquet files in Polars
+or a directory of PDF files, we may run out of memory, and generally consume more resources than required.
 
+The `Iterate` dataset can help executing the same logic to multiple datasets,
+without the need to load them all in memory first.
 
-
-
-
-
-
-
-
+Instead, `Iterate` makes use of Python generators to process the datasets one by one.
 
 ```pycon
 >>> from collections.abc import Iterable
@@ -29,5 +29,5 @@
 ...     for content in contents:
 ...         yield {"content": content}
 
-
+```
 

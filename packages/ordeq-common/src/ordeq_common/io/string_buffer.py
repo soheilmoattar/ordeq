@@ -58,7 +58,7 @@ class StringBuffer(IO[str]):
     """
 
     _buffer: StringIO = field(default_factory=StringIO, init=False)
-
+    value: InitVar[str | None] = None
 
     def __post_init__(self, value: str | None):
         if value is not None:

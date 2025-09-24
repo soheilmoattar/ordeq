@@ -24,5 +24,5 @@ class Static(Input[T]):
 
     value: T
 
-
+    def load(self) -> T:
         return self.value

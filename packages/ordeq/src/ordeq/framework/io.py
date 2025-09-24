@@ -1,9 +1,9 @@
+from __future__ import annotations
 
-
-
-
+import copy
+import inspect
 import logging
-
+from collections.abc import Callable, Sequence
 from functools import cached_property, reduce, wraps
 from typing import Any, Generic, TypeVar
 from uuid import uuid4
@@ -13,7 +13,7 @@ try:
 except ImportError:
     from typing_extensions import Self
 
-
+from ordeq.framework.hook import InputHook, OutputHook
 
 logger = logging.getLogger(__name__)
 
@@ -39,21 +39,21 @@ def _find_references(attributes) -> dict[str, list[Input | Output | IO]]:
         a dictionary mapping attribute names to lists of Input, Output, or IO
     """
 
+    def get_io_instance(value: Any) -> list[Input | Output | IO]:
+        if isinstance(value, (Input, Output, IO)):
+            return [value]
+        if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+            return [io for v in value for io in get_io_instance(v)]
+        if isinstance(value, dict):
+            return [io for v in value.values() for io in get_io_instance(v)]
+        return []
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    wrapped = {}
+    for attribute, value in attributes.items():
+        ios = get_io_instance(value)
+        if ios:
+            wrapped[attribute] = ios
+    return wrapped
 
 
 def _raise_not_implemented(*args, **kwargs):
@@ -90,7 +90,7 @@ def _load_decorator(load_func):
 
 
 class _InputMeta(type):
-
+    def __new__(cls, name, bases, class_dict):
         # Retrieve the closest load method
         load_method = _raise_not_implemented
         for base in bases:
@@ -102,10 +102,10 @@ class _InputMeta(type):
                 load_method = l_method
 
         l_method = class_dict.get("load", None)
-
+        if (
             l_method is not None
             and l_method.__qualname__ != "_raise_not_implemented"
-
+        ):
             load_method = l_method
 
         if name not in {"Input", "IO"}:
@@ -134,9 +134,9 @@ class _InputMeta(type):
                         f"'{load_method.__name__}' has no default value."
                     )
 
-
-
-
+        if not hasattr(load_method, "__wrapped__"):
+            class_dict["load"] = _load_decorator(load_method)
+        return super().__new__(cls, name, bases, class_dict)
 
 
 class _BaseInput(Generic[Tin]):
@@ -335,7 +335,7 @@ def _save_decorator(save_func):
             ),
             wrappers,
             base_func,
-
+        )
         composed(data, *args, **kwargs)
 
     return wrapper
@@ -424,7 +424,7 @@ class _OutputOptions(_BaseOutput[Tout], Generic[Tout]):
 
         # Set the dict directly to support IO that are frozen dataclasses
         new_instance.__dict__["_save_options"] = save_options
-
+        return new_instance
 
     def save_wrapper(self, save_func, data: Tout, *args, **kwargs) -> None:
         save_options = self._save_options or {}
@@ -441,15 +441,15 @@ class _OutputHooks(_BaseOutput[Tout], Generic[Tout]):
     output_hooks: tuple[OutputHook, ...] = ()
 
     def with_output_hooks(self, *hooks: OutputHook) -> Self:
-
-
+        for hook in hooks:
+            if not (
                 isinstance(hook, OutputHook) and not isinstance(hook, type)
-
+            ):
                 raise TypeError(f"Expected OutputHook instance, got {hook}.")
 
         new_instance = copy.copy(self)
         new_instance.__dict__["output_hooks"] = hooks
-
+        return new_instance
 
     def save_wrapper(self, save_func, data: Tout, *args, **kwargs) -> None:
         for hook in self.output_hooks:

@@ -1,18 +1,18 @@
+from __future__ import annotations
 
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Protocol,
+    TypeAlias,
+    TypeVar,
+    runtime_checkable,
+)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+if TYPE_CHECKING:
+    from ordeq.framework.graph import NodeGraph
+    from ordeq.framework.io import IO, Input, Output
+    from ordeq.framework.nodes import Node
 
 T = TypeVar("T")
 
@@ -86,34 +86,34 @@ class NodeHook(Protocol):
 
         return
 
+    def after_node_run(self, node: Node) -> None:
+        return None
 
 
+@runtime_checkable
+class RunHook(Protocol):
+    """Hook used to inject custom logic that will be executed when a graph is
+    run."""
+
+    def before_run(self, graph: NodeGraph) -> None:
+        """Triggered before the graph is run.
+
+        Args:
+            graph: the graph object
+        """
+
+        return
+
+    def after_run(
+        self, graph: NodeGraph, data: dict[Input | Output | IO, Any]
+    ) -> None:
+        """Triggered after the graph is run.
+
+        Args:
+            graph: the graph object
+            data: mapping of all inputs and outputs to their loaded/saved data
+        """
+        return
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Hook: TypeAlias = InputHook | OutputHook | NodeHook | RunHook

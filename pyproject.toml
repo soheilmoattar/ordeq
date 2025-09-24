@@ -1,37 +1,37 @@
 [project]
 name = "ordeq-packages"
 requires-python = ">=3.10"
-
+version = "0.1.0"
 
 [dependency-groups]
 dev = [
-
-
-
-
-
-
-
-
-
-
-
-
+    "pre-commit>=4.2.0",
+    "rust-just>=1.42.4",
+]
+lint = [
+    "ruff>=0.12.5",
+]
+docs = [
+    "mkdocs",
+    "mkdocs-autoapi",
+    "mkdocs-material",
+    "mkdocs-material-extensions",
+    "mkdocstrings[python]",
     "markdown",
     "pymdown-extensions",
 ]
 test = [
-
-
-
-
+    "pytest-cov>=6.2.1",
+    "pytest>=8.4.1",
+]
+test-ci = [
     { include-group = "test" },
-
+    "pytest-azurepipelines",
 ]
 types = [
-
-
-
+    "mypy>=1.17",
+    "ty>=0.0.1a16",
+]
 
 [tool.uv.sources]
 ordeq = { workspace = true }
@@ -41,7 +41,7 @@ ordeq-common = { workspace = true }
 ordeq-cli-runner = { workspace = true }
 ordeq-faiss = { workspace = true }
 ordeq-files = { workspace = true }
-
+ordeq-huggingface = { workspace = true }
 ordeq-ibis = { workspace = true }
 ordeq-joblib = { workspace = true }
 ordeq-matplotlib = { workspace = true }
@@ -59,44 +59,44 @@ ordeq-viz-cli = { workspace = true }
 [tool.uv.workspace]
 members = ["packages/*"]
 
+[tool.coverage.paths]
+source = ["packages/*/src"]
 
-
-
-
-
+[tool.coverage.report]
+exclude_lines = [
     "if TYPE_CHECKING:",
     "pass",
     "raise NotImplementedError",
+]
+fail_under = 85
 
-
-
-
-
+[tool.coverage.run]
+omit = [
     "_version.py",
     "packages/ordeq/tests/resources/*",
     "packages/ordeq/tests/snapshots/*",
-
-
-
-
-
-    "docker: marks tests that require (deselect with '-m \"not docker\"')",
 ]
 
+[tool.pytest.ini_options]
+addopts = "--doctest-modules --import-mode=importlib"
+markers = [
+    "docker: marks tests that require (deselect with '-m \"not docker\"')",
+]
+norecursedirs = ["build", "resources"]
+pythonpath = ["src", "tests"]
 
-
-
+[tool.ruff]
 exclude = [
     "packages/*/src/*/_version.py",
     "packages/*/tests/resources/*",
 ]
 force-exclude = true
+line-length = 79
+preview = true
+target-version = "py310"
 
-
-
-
-
-
+[tool.ruff.format]
+skip-magic-trailing-comma = true
 
 [tool.ruff.lint]
 extend-select = [
@@ -158,12 +158,12 @@ ignore = [
     "S403", # Pickle
 ]
 
-
-
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
 
 [tool.ruff.lint.per-file-ignores]
-
-
+# Rules not applicable for tests
+"packages/*/tests/*" = [
     "ANN201",
     "D",
     "DOC",
@@ -173,20 +173,20 @@ ignore = [
     "S101",
     "S608",
     "SLF",
-
-
-
+]
+# Rules not applicable for types.py
+"packages/ordeq/src/ordeq/types.py" = [
     "ANN201",
     "D",
     "DOC",
     "PLC2701",
     "PLR6301",
+]
+# Rules not applicable for scripts
+"scripts/*" = ["INP001", "S607", "S603", "S404", "D103"]
 
-
-
-
-
-
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.ty.src]
 exclude = [
@@ -194,10 +194,10 @@ exclude = [
     "packages/*/tests/resources/*"  # type checking on resources is conducted by snapshot tests
 ]
 
-
-
-
-
-
-
-
+[tool.ty.rules]
+invalid-argument-type = "ignore"
+invalid-type-form = "ignore"
+possibly-unbound-attribute = "ignore"
+unresolved-attribute = "ignore"
+unsupported-operator = "ignore"
+missing-argument = "ignore"  # TODO: enable when `with_load_options` / `with_save_options` is fixed

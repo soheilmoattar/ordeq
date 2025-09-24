@@ -22,8 +22,8 @@ dependencies = [
     "requests",
 ]
 
-
-
+[dependency-groups]
+types = ["types-requests"]
 test = [
     "fastapi",
     "pydantic",

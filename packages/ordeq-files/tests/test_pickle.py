@@ -2,11 +2,11 @@ import pickle
 from collections.abc import Callable
 from pathlib import Path
 
-
+import pytest
 from cloudpathlib import CloudPath
 from minio.helpers import ObjectWriteResult
-
-
+from ordeq_files import Pickle
+from urllib3 import BaseHTTPResponse
 
 
 class TestPickleLocal:
@@ -27,7 +27,7 @@ class TestPickleLocal:
 
 
 class TestPickleMinio:
-
+    @pytest.mark.docker
     def test_it_loads(
         self,
         minio_put_object: Callable[[str, bytes], ObjectWriteResult],
@@ -38,7 +38,7 @@ class TestPickleMinio:
         minio_put_object(key, pickle.dumps(data))
         assert Pickle(path=minio_cloudpath(key)).load() == data
 
-
+    @pytest.mark.docker
     def test_it_saves(
         self,
         minio_cloudpath: Callable[[str], CloudPath],

@@ -1,12 +1,12 @@
 from collections.abc import Callable
 from pathlib import Path
 
-
+import pytest
 import yaml
 from cloudpathlib import CloudPath
 from minio.helpers import ObjectWriteResult
-
-
+from ordeq_files import YAML
+from urllib3 import BaseHTTPResponse
 
 
 class TestYAMLLocal:
@@ -26,7 +26,7 @@ class TestYAMLLocal:
 
 
 class TestYAMLMinio:
-
+    @pytest.mark.docker
     def test_it_loads(
         self,
         minio_put_object: Callable[[str, bytes], ObjectWriteResult],
@@ -37,7 +37,7 @@ class TestYAMLMinio:
         minio_put_object(key, yaml.dump(data).encode("utf-8"))
         assert YAML(path=minio_cloudpath(key)).load() == data
 
-
+    @pytest.mark.docker
     def test_it_saves(
         self,
         minio_cloudpath: Callable[[str], CloudPath],

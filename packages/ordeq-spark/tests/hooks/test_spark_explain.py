@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock
 
 from _pytest.capture import CaptureFixture
-
+from ordeq_spark import SparkExplainHook
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 
@@ -15,7 +15,7 @@ def test_before_dataset_save_prints_explain_output(
         .where(F.col("id") < 3)
         .filter(F.col("val") != "c")
     )
-
+    hook = SparkExplainHook()
     node = MagicMock()
     dataset = MagicMock()
 

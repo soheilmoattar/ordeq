@@ -3,10 +3,10 @@ from dataclasses import dataclass
 from typing import Any
 
 from ordeq.framework.io import Input
-
+from pyspark.sql import DataFrame
 from pyspark.sql.types import StructType
 
-
+from ordeq_spark.utils import get_spark_session
 
 
 @dataclass(frozen=True, kw_only=True, eq=False)
@@ -39,8 +39,8 @@ class SparkStatic(Input[DataFrame]):
     data: Iterable[tuple[Any, ...]]
     schema: StructType | None = None
 
-
-
-
-
+    def load(self) -> DataFrame:
+        return get_spark_session().createDataFrame(
+            data=self.data,
+            schema=self.schema,  # type: ignore[arg-type]
         )

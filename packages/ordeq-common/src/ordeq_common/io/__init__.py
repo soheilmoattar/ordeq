@@ -7,10 +7,10 @@ from ordeq_common.io.static import Static
 from ordeq_common.io.string_buffer import StringBuffer
 
 __all__ = (
-
+    "BytesBuffer",
     "Dataclass",
     "Iterate",
-
+    "Match",
     "MatchOnLoad",
     "MatchOnSave",
     "Print",

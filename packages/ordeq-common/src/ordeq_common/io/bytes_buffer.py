@@ -46,7 +46,7 @@ class BytesBuffer(IO[bytes]):
     """
 
     _buffer: BytesIO = field(default_factory=BytesIO, init=False)
-
+    value: InitVar[bytes | None] = None
 
     def __post_init__(self, value: bytes | None):
         if value is not None:

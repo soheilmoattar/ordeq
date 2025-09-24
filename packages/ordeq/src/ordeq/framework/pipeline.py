@@ -59,11 +59,11 @@ def is_pipeline(obj: object) -> TypeGuard[Pipeline]:
     """Returns whether an object is a pipeline, meaning a set of nodes. Used
     because ``isinstance`` cannot be used on generic type ``set[Node]``.
 
+    Args:
+        obj: the object
 
-
-
-
-
+    Returns:
+        whether ``obj`` is a pipeline or not
     """
 
     return isinstance(obj, set) and all(callable(o) for o in obj)

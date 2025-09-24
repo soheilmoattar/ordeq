@@ -15,61 +15,61 @@ We are young project and still figuring out how we can collaborate best.
 
 ### Development & testing
 
+The `just` command runner tool is used for common tasks in the project.
+After installing it, you can run `just` to see the available commands:
 
+```text
+Available recipes:
+    localsetup        # Local installation
+    lint              # Linting with ruff
+    ty                # Type checking with ty
+    mypy              # Type checking with mypy
+    sa                # Static analysis (lint + type checking)
+    fix               # Format code and apply lint fixes with ruff
+    test              # Run tests per package
+    test_all          # Run tests for all packages with coverage
+    docs              # Build the documentation
+    precommit         # Run pre-commit hooks
+    precommit_install # Install pre-commit hooks
+    install           # Install development dependencies
+    upgrade           # Upgrade (pre-commit only)
+    lock              # Lock dependencies
+    bump *ARGS        # Bump version
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Tip: install support for `just` in your IDE, e.g. [just for PyCharm](https://plugins.jetbrains.com/plugin/18658-just).
 
 Install Ordeq locally in editable mode:
 
-
-
-
+```shell
+just localsetup
+```
 
 (In case of any issues, check out the troubleshooting section below)
 
 Install the pre-commit hooks:
 
-
+```shell
 uv run pre-commit install
+```
 
-
-
-
-
-
+- When you start on a work item, create a new branch `feature/*`.
+- The CI pipeline will be triggered when you create a pull request.
+- Pull requests should merge your branch into `main`.
+- You are encouraged to open and share draft PRs for work that is pending.
 - The merge type can be squash commit or merge, provided the commit messages are descriptive enough.
-
+- There is a policy check on the PR which ensures that, before merge:
     - the build has succeeded (formatting, linters & tests pass)
     - open comments are resolved
     - at least one person besides the author has approved
 
 ### Releases
 
-
-
+- Releases are currently done manually.
+- We use [semantic versioning](http://semver.org/) for the release tags.
 - Releases should be done for each package individually, e.g. `ordeq`,`ordeq-spark`
 - Releases should only be made from the `main` branch. To create a release:
-
+    - Pull and checkout the latest main branch locally
     - Create a git tag on the latest commit: `git tag -a "{package}/{version}" -m "{message}"`. The message can be used to highlight the most significant change in this release.
     - Push the tags to the remote: `git push --tags`
     - The CI pipeline will be triggered by the pushed tag and automatically build the release

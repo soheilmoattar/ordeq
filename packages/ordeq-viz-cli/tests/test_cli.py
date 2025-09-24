@@ -19,7 +19,7 @@ from ordeq_viz_cli import main, parse_args
                 "output_dir",
             ),
             {
-
+                "packages": ["example1.a1"],
                 "fmt": "kedro",
                 "output": Path("output_dir"),
             },
@@ -35,7 +35,7 @@ from ordeq_viz_cli import main, parse_args
                 "output_dir",
             ),
             {
-
+                "packages": ["example1.a1", "example2.a2"],
                 "fmt": "kedro",
                 "output": Path("output_dir"),
             },
@@ -50,7 +50,7 @@ from ordeq_viz_cli import main, parse_args
                 "output_dir",
             ),
             {
-
+                "packages": ["example1.a1"],
                 "fmt": "mermaid",
                 "output": Path("output_dir"),
             },
@@ -68,7 +68,7 @@ from ordeq_viz_cli import main, parse_args
                 "value",
             ),
             {
-
+                "packages": ["example1.a1"],
                 "fmt": "mermaid",
                 "output": Path("output_dir"),
             },
@@ -96,5 +96,5 @@ def test_it_calls_viz(mocked_viz: MagicMock):
     ):
         main()
     mocked_viz.assert_called_once_with(
-
+        "example1.a1", output=Path("output_dir"), fmt="kedro"
     )

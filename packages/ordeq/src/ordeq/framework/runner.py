@@ -5,7 +5,7 @@ from types import ModuleType
 from typing import Literal, TypeVar, overload
 
 from ordeq.framework.graph import NodeGraph
-
+from ordeq.framework.hook import NodeHook, RunHook
 from ordeq.framework.io import Input, Output, _InputCache
 from ordeq.framework.nodes import NODE_REGISTRY, Node, get_node
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
-
+DataStoreType = dict[Input[T] | Output[T], T]
 # The save mode determines which outputs are saved. When set to:
 # - 'all', all outputs are saved, including those of intermediate nodes.
 # - 'sinks', only outputs of sink nodes are saved, i.e. those w/o successors.
@@ -24,27 +24,27 @@ T = TypeVar("T")
 SaveMode = Literal["all", "sinks", "none"]
 
 
-
+def _save_outputs(
     node: Node, values: Sequence[T], save: bool = True
-
-
-
-
+) -> dict[Input[T] | Output[T], T]:
+    computed: dict[Input[T] | Output[T], T] = {}
+    for output_dataset, data in zip(node.outputs, values, strict=False):
+        computed[output_dataset] = data
 
         # TODO: this can be handled in the `save_wrapper`
         if save:
             output_dataset.save(data)
 
+    return computed
 
 
-
-
+def _run_node(
     node: Node, *, hooks: Sequence[NodeHook] = (), save: bool = True
+) -> DataStoreType:
+    node.validate()
 
-
-
-
-
+    for node_hook in hooks:
+        node_hook.before_node_run(node)
 
     args = [input_dataset.load() for input_dataset in node.inputs]
 
@@ -58,7 +58,7 @@ SaveMode = Literal["all", "sinks", "none"]
     try:
         values = node.func(*args)
     except Exception as exc:
-
+        for node_hook in hooks:
             node_hook.on_node_call_error(node, exc)
         raise exc
 
@@ -66,8 +66,8 @@ SaveMode = Literal["all", "sinks", "none"]
         values = ()
     elif len(node.outputs) == 1:
         values = (values,)
-
-
+    else:
+        values = tuple(values)
 
     computed = _save_outputs(node, values, save=save)
 
@@ -76,10 +76,10 @@ SaveMode = Literal["all", "sinks", "none"]
         if isinstance(node_output, _InputCache):
             node_output.persist(computed[node_output])  # ty: ignore[call-non-callable]
 
-
+    for node_hook in hooks:
         node_hook.after_node_run(node)
 
-
+    return computed
 
 
 def _run_graph(
@@ -88,10 +88,10 @@ def _run_graph(
     hooks: Sequence[NodeHook] = (),
     save: SaveMode = "all",
     io: dict[Input[T] | Output[T], Input[T] | Output[T]] | None = None,
-
+) -> DataStoreType:
     """Runs nodes in a graph topologically, ensuring IOs are loaded only once.
 
-
+    Args:
         graph: node graph to run
         hooks: hooks to apply
         hooks: hooks to apply
@@ -99,7 +99,7 @@ def _run_graph(
             If 'sinks', only saves the outputs of sink nodes in the graph.
         io: mapping of IO objects to their replacements
 
-
+    Returns:
         a dict mapping each IO to the computed data
 
     """
@@ -196,21 +196,21 @@ def run(
 
 def run(
     *runnables: ModuleType | Callable,
-
-
-
-
-
+    hooks: Sequence[NodeHook | RunHook] = (),
+    save: SaveMode = "all",
+    verbose: bool = False,
+    io: dict[Input[T] | Output[T], Input[T] | Output[T]] | None = None,
+) -> DataStoreType:
     """Runs nodes in topological order.
 
-
+    Args:
         runnables: the nodes to run, or a modules containing nodes
         hooks: hooks to apply
         save: 'all' | 'sinks'. If 'sinks', only saves the sink outputs
+        verbose: whether to print the node graph
+        io: mapping of IO objects to their replacements
 
-
-
-
+    Returns:
         a dict mapping each IO to the computed data
 
     Raises:
@@ -233,15 +233,15 @@ def run(
     if verbose:
         print(graph)
 
+    node_hooks: list[NodeHook] = [h for h in hooks if isinstance(h, NodeHook)]
+    run_hooks: list[RunHook] = [h for h in hooks if isinstance(h, RunHook)]
 
+    for run_hook in run_hooks:
+        run_hook.before_run(graph)
 
+    result = _run_graph(graph, hooks=node_hooks, save=save, io=io)
 
+    for run_hook in run_hooks:
+        run_hook.after_run(graph, result)
 
-
-
-
-
-
-
-
-
+    return result

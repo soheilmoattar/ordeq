@@ -1,4 +1,4 @@
-
+from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
@@ -41,9 +41,9 @@ class Dataclass(Input["DataclassInstance"]):
     """  # noqa: E501 (line too long)
 
     io: IO[dict]
+    dataclass: type[DataclassInstance]
 
-
-
-
+    def load(self) -> DataclassInstance:
+        data = self.io.load()
         # noinspection PyArgumentList
         return self.dataclass(**data)

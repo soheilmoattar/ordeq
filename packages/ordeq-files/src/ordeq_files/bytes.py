@@ -23,10 +23,10 @@ class Bytes(IO[bytes]):
 
     path: PathLike
 
-
+    def load(self) -> bytes:
         with self.path.open(mode="rb") as fh:
             return fh.read()
 
-
+    def save(self, data: bytes) -> None:
         with self.path.open(mode="wb") as fh:
             fh.write(data)

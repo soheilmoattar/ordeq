@@ -2,7 +2,7 @@ import importlib
 from collections.abc import Callable
 from types import ModuleType
 
-
+from ordeq import NodeHook
 from ordeq.framework.pipeline import Pipeline, is_pipeline
 from ordeq.framework.runner import DataStoreType, SaveMode, run
 
@@ -125,7 +125,7 @@ def get_pipeline(
     return obj
 
 
-
+def get_hook(ref: str) -> NodeHook:
     """Gets a hook based on its reference. The reference should be
     formatted ``{package}.{subpackage}.{...}:{name}``. Used to retrieve a
     hook based on a reference provided to the CLI.
@@ -141,7 +141,7 @@ def get_pipeline(
     """
 
     obj = get_obj(ref)
-
+    if not isinstance(obj, NodeHook):
         msg = f"'{ref}' is not a hook"
         raise TypeError(msg)
     return obj
@@ -152,7 +152,7 @@ def run_node_refs(
     hook_refs: tuple[str],
     *,
     save: SaveMode = "all",
-
+) -> DataStoreType:
     """Runs nodes by their references. References should be formatted
     `{package}.{subpackage}.{...}:{object-name}`. This method should not be
     called directly by users.
@@ -176,7 +176,7 @@ def run_node_refs(
 
 def run_pipeline_ref(
     pipeline_ref: str, hook_refs: tuple[str], *, save: SaveMode = "all"
-
+) -> DataStoreType:
     """Runs a pipeline by its references. References should be formatted
     `{package}.{subpackage}.{...}:{object-name}`. This method should not be
     called directly by users.

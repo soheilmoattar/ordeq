@@ -1,13 +1,13 @@
 Exception:
 TypeError: got an unexpected keyword argument 'unknown_kwarg'
 
-
+Output:
 <class 'with_save_options.ExampleOutputSaveKwarg'>
 <class 'with_save_options.ExampleOutputSaveKwarg'>
 <class 'with_save_options.ExampleOutputSaveArg'>
 <class 'with_save_options.ExampleOutputSaveArg'>
 
-
+Logging:
 INFO	ordeq.framework.io	Saving ExampleOutputSaveKwarg(path=PosixPath('hello.txt'), attribute='L1')
 INFO	ordeq.framework.io	Saving ExampleOutputSaveKwarg(path=PosixPath('hello.txt'), attribute='L1')
 INFO	ordeq.framework.io	Saving ExampleOutputSaveKwarg(path=PosixPath('hello.txt'), attribute='L1')

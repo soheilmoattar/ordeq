@@ -1,28 +1,28 @@
+from dataclasses import dataclass
+from pathlib import Path
+
+from ordeq import Input
 
 
-
-
-
-
-
+@dataclass(kw_only=True, frozen=True)
 class ExampleInputLoadKwarg(Input):
-
-
+    path: Path
+    attribute: str
 
     def load(self, hello: str = "Hi") -> str:
-
+        return f"{self.path}@{self.attribute}: {hello} world!"
 
 
 example_input = ExampleInputLoadKwarg(path=Path("hello.txt"), attribute="L1")
 # No kwarg:
 print(example_input.load())
 # Alternative kwarg:
-
+print(example_input.load(hello="Hello"))
 print(type(example_input))
 
-
+with_options = example_input.with_load_options(hello="Hello")
 # No kwarg, with load options:
-
+print(with_options.load())
 # Alternative kwarg, with load options:
 print(with_options.load(hello="Hello"))
 print(type(with_options))

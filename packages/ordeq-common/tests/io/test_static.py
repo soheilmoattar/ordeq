@@ -1,8 +1,8 @@
 from ordeq_common import Static
 
 
-
-
+def test_it_loads():
+    assert Static("someValue").load() == "someValue"
 
 
 def test_it_is_unique():

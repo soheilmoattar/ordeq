@@ -1,11 +1,11 @@
-
+# Benchmarking node runtime
 
 Node [hooks](../../1_Getting_started/2_Concepts/hooks.md) can be used to keep
 track of node execution durations. Using hooks to achieve this has the
 advantage that the timing does not add cognitive complexity to the dataset
 transformations. It also avoids repetitive boilerplate code inside the nodes.
 
-
+`timer_hook.py`:
 
 ```pycon
 >>> from time import perf_counter
@@ -29,9 +29,9 @@ transformations. It also avoids repetitive boilerplate code inside the nodes.
 >>>
 >>> timer = TimerHook()
 
+```
 
-
-
+Usage:
 
 ```pycon
 >>> from ordeq import node, run
@@ -40,4 +40,4 @@ transformations. It also avoids repetitive boilerplate code inside the nodes.
 ... def my_transformation_function(data):
 ...     ...
 >>> run(my_transformation_function, hooks=[timer])  # doctest: +SKIP
-
+```

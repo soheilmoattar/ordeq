@@ -45,24 +45,24 @@ def _create_parser() -> ArgumentParser:
     return parser
 
 
+def parse_args(args: tuple[str, ...] | None = None) -> Namespace:
+    """Function to parse the command line arguments
 
+    Args:
+        args: optional arguments
 
-
-
-
-
-
-
-
+    Returns:
+        parsed args namespace
+    """
 
     parser = _create_parser()
     known_args, _ = parser.parse_known_args(args=args)
     return known_args
 
 
-
-
-
+def main() -> None:
+    """Main function for the CLI. Parses arguments and runs the provided
+    nodes."""
     args = parse_args()
     if args.nodes:
         run_node_refs(

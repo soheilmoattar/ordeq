@@ -7,11 +7,11 @@ from ordeq_viz.api import viz
 def _create_parser() -> ArgumentParser:
     parser = ArgumentParser()
     parser.add_argument(
-
-
+        "packages",
+        metavar="package.subpackage package2",
         nargs="+",
         help=(
-
+            "Point to the Python package(s) for which to gather the nodes "
             "for the pipeline."
         ),
     )
@@ -56,4 +56,4 @@ def main() -> None:
     """Main function for the CLI. Parses arguments and runs the viz."""
 
     args = parse_args()
-
+    viz(*args.packages, fmt=args.fmt, output=args.output)
