@@ -2,7 +2,7 @@ import logging
 from collections.abc import Callable, Sequence
 from itertools import chain
 from types import ModuleType
-from typing import Literal, TypeVar, overload
+from typing import Literal, TypeVar
 
 from ordeq.framework._gather import _collect_nodes
 from ordeq.framework.graph import NodeGraph
@@ -154,26 +154,6 @@ def _patch_io(
         inputs=[io.get(ip, ip) for ip in node.inputs],  # type: ignore[misc]
         outputs=[io.get(op, op) for op in node.outputs],  # type: ignore[misc]
     )
-
-
-@overload
-def run(
-    *runnables: ModuleType,
-    hooks: Sequence[NodeHook | RunHook] = (),
-    save: SaveMode = "all",
-    verbose: bool = False,
-    io: dict[Input[T] | Output[T], Input[T] | Output[T]] | None = None,
-) -> DataStoreType: ...
-
-
-@overload
-def run(
-    *runnables: Callable,
-    hooks: Sequence[NodeHook | RunHook] = (),
-    save: SaveMode = "all",
-    verbose: bool = False,
-    io: dict[Input[T] | Output[T], Input[T] | Output[T]] | None = None,
-) -> DataStoreType: ...
 
 
 def run(
