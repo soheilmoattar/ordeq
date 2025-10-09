@@ -1,7 +1,7 @@
 from argparse import ArgumentParser, Namespace
 from typing import get_args
 
-from ordeq.framework.runner import SaveMode
+from ordeq.runner import SaveMode
 
 from ordeq_cli_runner.runner import run_node_refs, run_pipeline_ref
 
