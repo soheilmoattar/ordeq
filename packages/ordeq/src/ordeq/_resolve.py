@@ -5,6 +5,7 @@ import pkgutil
 from collections.abc import Callable, Generator, Hashable, Iterable
 from types import ModuleType
 
+from ordeq._hook import NodeHook, RunHook
 from ordeq._io import IO, Input, Output
 from ordeq._nodes import Node, get_node
 from ordeq._registry import NODE_REGISTRY
@@ -117,6 +118,60 @@ def _resolve_node_reference(ref: str) -> Node:
             f"Node '{node_name}' not found in module '{module_name}'"
         )
     return get_node(node_obj)
+
+
+def _resolve_hook_reference(ref: str) -> NodeHook | RunHook:
+    """Resolves a hook reference string of the form 'package.module:hook_name'.
+
+    Args:
+        ref: Reference string, e.g. 'my_package.my_module:my_hook'
+
+    Returns:
+        The resolved Hook object.
+
+    Raises:
+        ValueError: if the hook cannot be found or is not a valid Hook object.
+    """
+
+    if ":" not in ref:
+        raise ValueError(f"Invalid hook reference: '{ref}'.")
+    module_name, _, hook_name = ref.partition(":")
+    module = _resolve_string_to_module(module_name)
+    hook_obj = getattr(module, hook_name, None)
+    if hook_obj is None or not isinstance(hook_obj, (NodeHook, RunHook)):
+        raise ValueError(
+            f"Hook '{hook_name}' not found in module '{module_name}'"
+        )
+    return hook_obj
+
+
+def _resolve_hooks(
+    *hooks: str | NodeHook | RunHook,
+) -> tuple[list[RunHook], list[NodeHook]]:
+    """Resolves a hook which can be a reference string or a Hook object.
+
+    Args:
+        hooks: References to hooks, or hook objects
+
+    Returns:
+        A tuple of lists with node hooks and run hooks
+
+    """
+
+    run_hooks = []
+    node_hooks = []
+    for hook in hooks:
+        if isinstance(hook, NodeHook):
+            node_hooks.append(hook)
+        elif isinstance(hook, RunHook):
+            run_hooks.append(hook)
+        elif isinstance(hook, str):
+            resolved_hook = _resolve_hook_reference(hook)
+            if isinstance(resolved_hook, NodeHook):
+                node_hooks.append(resolved_hook)
+            elif isinstance(resolved_hook, RunHook):
+                run_hooks.append(resolved_hook)
+    return run_hooks, node_hooks
 
 
 def _resolve_runnables_to_nodes_and_modules(
