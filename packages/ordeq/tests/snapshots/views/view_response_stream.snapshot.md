@@ -1,13 +1,13 @@
 ## Resource
 
 ```python
+from collections.abc import Generator
+
 import requests
-
 from ordeq import node, run
-from ordeq_common import Print, Literal
-from typing import Generator
+from ordeq_common import Literal, Print
 
-response = requests.get("https://jsonplaceholder.typicode.com/users/1")
+response = requests.get("https://jsonplaceholder.typicode.com/users/1")  # noqa: S113 (call without timeout)
 users_response = Literal(response)
 
 
