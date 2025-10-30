@@ -36,4 +36,4 @@ class S3Resource(Input[ServiceResource]):
         Returns:
             The S3 ServiceResource
         """
-        return boto3.resource(service_name="s3", **load_options)
+        return boto3.resource("s3", **load_options)

@@ -30,7 +30,7 @@ def client(minio: MinioContainer) -> S3Client:
 def resource(minio: MinioContainer) -> ServiceResource:
     config = minio.get_config()
     return boto3.resource(
-        service_name="s3",
+        "s3",
         aws_access_key_id=config["access_key"],
         aws_secret_access_key=config["secret_key"],
         endpoint_url="http://" + config["endpoint"],
