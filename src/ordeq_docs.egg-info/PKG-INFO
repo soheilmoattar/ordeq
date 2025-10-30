@@ -1,0 +1,6 @@
+Metadata-Version: 2.4
+Name: ordeq-docs
+Version: 0.1.0
+Requires-Dist: ordeq
+Requires-Dist: ordeq-polars
+Requires-Dist: marimo
